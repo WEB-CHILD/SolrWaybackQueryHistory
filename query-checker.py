@@ -1,48 +1,27 @@
 #!/usr/bin/env python3
 # Program for extracting solr queries from a txt file of browser history.
 # Browswer history file is expected to have one URL per line and be in inverted chronological order.
-from urllib.parse import unquote_plus
+from urllib.parse import unquote_plus, urlparse, parse_qs
 import argparse
 import sys
 from pathlib import Path
 
-def extract_query_from_url(url):
+def parse_solrwayback_params(url):
     """
-    Extracts the query parameter from a SolrWayback search URL.
+    Parse SolrWayback search URL parameters using urlparse + parse_qs.
+    Returns tuple: (query, facets, fq) or (None, None, None) when not present.
     """
-    keyword = "search?query="
-    pos = url.find(keyword)
+    decoded = unquote_plus(url.strip())
+    parsed = urlparse(decoded)
+    # parse_qs returns lists for each key
+    params = parse_qs(parsed.query, keep_blank_values=True)
 
-    if pos != -1:
-        semi_sliced_string = url[pos + len(keyword):]
-            
-        query = semi_sliced_string.split("&")[0] 
-        return query
+    query = params.get("query", [None])[0]
+    facets = params.get("facets", [None])[0]
+    # collect all fq values (parse_qs gives a list if multiple fq are present)
+    fqs = params.get("fq", [])
 
-def extract_facets_from_url(url):
-    """
-    Extracts the facets parameter from a SolrWayback search URL.
-    """
-    keyword = "facets="
-    pos = url.find(keyword)
-    if pos != -1:
-        semi_sliced_string = url[pos + len(keyword):]  
-            
-        facets = semi_sliced_string.split("&")[0]  
-        return facets
-
-def extract_filterquery_from_url(url):
-    """
-    Extracts the filter query (fq) parameter from a SolrWayback search URL.
-    """
-    keyword = "fq="
-    pos = url.find(keyword)
-    if pos != -1:
-        semi_sliced_string = url[pos + len(keyword):]  
-            
-        fq = semi_sliced_string.split("&")[0]  
-        return fq
-
+    return query, facets, fqs
 
 def print_results(query, facets, filterquery, counter):
     """
@@ -52,8 +31,13 @@ def print_results(query, facets, filterquery, counter):
     print("Query: ", query)
     if facets:
         print("Facets: ", facets)
+    # Pretty printing of list of filterqueries
     if filterquery:
-        print("Filter Query: ", filterquery)
+        if isinstance(filterquery, list):
+            for i, fq in enumerate(filterquery, start=1):
+                print(f"Filter Query {i}: ", fq)
+        else:
+            print("Filter Query: ", filterquery)
     print("-----------------------")
 
 def main(history_path):
@@ -81,9 +65,7 @@ def main(history_path):
             if "localhost:8080/solrwayback/search?query=" in decoded_line:
                 counter += 1
 
-                query = extract_query_from_url(decoded_line)
-                facets = extract_facets_from_url(decoded_line)
-                filterquery = extract_filterquery_from_url(decoded_line)
+                query, facets, filterquery = parse_solrwayback_params(decoded_line)
             
                 print_results(query, facets, filterquery, counter)
 

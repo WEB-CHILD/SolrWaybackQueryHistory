@@ -1,3 +1,5 @@
+http://localhost:8080/solrwayback/search?query=*:*&grouping=false&imgSearch=false&offset=0&urlSearch=false&facets=%26fq=domain:%22naver.com%22%26fq=crawl_year:%222000%22&sort=score+desc
+http://localhost:8080/solrwayback/search?query=*:*&grouping=false&imgSearch=false&offset=0&urlSearch=false&facets=%26fq=domain:%22naver.com%22&sort=score+desc
 http://localhost:8080/solrwayback/search?query=(domain:kidlink.org+OR+domain:kidlink.dk)+AND+%22who+am+i%22&grouping=false&imgSearch=false&offset=0&urlSearch=false&facets=%26fq=crawl_year:%222001%22&sort=crawl_date+desc
 https://addons.mozilla.org/en-GB/firefox/addon/sky-history-export/
 https://www.google.com/search?client=firefox-b-d&q=extract+firefox+history+
