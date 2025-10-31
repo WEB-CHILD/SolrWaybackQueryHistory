@@ -56,7 +56,6 @@ Notes:
 
 ## Limitations and possible improvements
 
-- The parser is intentionally simple and uses string searches. It may not correctly handle some edge-cases such as repeated parameters, encoded ampersands inside parameter values, or non-standard URL formats. A future improvement could use `urllib.parse.urlparse` and `urllib.parse.parse_qs` for more robust parsing.
 - The script currently looks for `localhost:8080/solrwayback/search?query=`. If your SolrWayback instance runs on a different host or port, update the script or use a preprocessed history file.
 
 ## Contributing
