@@ -68,7 +68,7 @@ If you use this tool in your academic work, please cite it as follows:
 
 ```bibtex
 @software{solrwayback_query_history_parser,
-  author       = {{Johnston, Victor Harbo}{WEB-CHILD}},
+  author       = {{Johnston, Victor Harbo}},
   title        = {SolrWayback Query History Parser},
   year         = {2025},
   publisher    = {Zenodo},
