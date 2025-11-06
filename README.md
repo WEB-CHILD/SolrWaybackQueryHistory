@@ -58,6 +58,22 @@ Notes:
 
 - The script currently looks for `localhost:8080/solrwayback/search?query=`. If your SolrWayback instance runs on a different host or port, update the script or use a preprocessed history file.
 
+## Citation
+
+If you use this tool in your academic work, please cite it as follows:
+
+### BibTeX
+
+```bibtex
+@software{solrwayback_query_history_parser,
+  author       = {{WEB-CHILD}},
+  title        = {SolrWayback Query History Parser},
+  year         = {2025},
+  url          = {https://github.com/WEB-CHILD/SolrWaybackQueryHistory},
+  note         = {A utility for extracting SolrWayback search queries from browser history files}
+}
+```
+
 ## Contributing
 
 Small fixes or clarifications are welcome. For code changes, please create a branch and open a pull request with a short description.

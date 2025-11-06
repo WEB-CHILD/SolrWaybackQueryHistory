@@ -1,0 +1,31 @@
+{
+  "title": "SolrWayback Query History Parser",
+  "description": "A utility for extracting and analyzing SolrWayback search queries from browser history files. Parses URL parameters including queries, facets, and filter queries, presenting them in chronological order.",
+  "creators": [
+    {
+      "name": "Victor Harbo Johnston",
+      "affiliation": "Aarhus University"
+    },
+    {
+      "name": "WEB-CHILD Project",
+      "affiliation": "Aarhus University"
+    }
+  ],
+  "upload_type": "software",
+  "keywords": [
+    "solrwayback",
+    "web archiving",
+    "search history",
+    "query parser",
+    "browser history"
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/netarchivesuite/solrwayback",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
