@@ -1,4 +1,6 @@
 # SolrWayback Query History Parser
+[![DOI](https://zenodo.org/badge/1086951828.svg)](https://doi.org/10.5281/zenodo.17539852)
+
 
 A small utility to extract SolrWayback search queries (and optional facets / filter queries) from a browser history text file.
 
@@ -69,6 +71,9 @@ If you use this tool in your academic work, please cite it as follows:
   author       = {{WEB-CHILD}},
   title        = {SolrWayback Query History Parser},
   year         = {2025},
+  publisher    = {Zenodo},
+  version      = {v0.0.1},
+  doi          = {10.5281/zenodo.17539853}, 
   url          = {https://github.com/WEB-CHILD/SolrWaybackQueryHistory},
   note         = {A utility for extracting SolrWayback search queries from browser history files}
 }
