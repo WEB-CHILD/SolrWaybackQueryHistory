@@ -6,6 +6,48 @@ import argparse
 import sys
 from pathlib import Path
 
+PLAYBACK_PREFIX = "http://localhost:8080/solrwayback/services/web/"
+QUERY_PREFIX = "http://localhost:8080/solrwayback/search?query="
+LAST_ACTION_EQUALS_CLICK = False
+COUNTER = 0
+
+def parse_archived_url(decoded_url):
+    """
+    Parse a SolrWayback archived web URL to extract the date and original URL.
+    
+    Parameters
+    ----------
+    decoded_url : str
+        A decoded URL in the format:
+        http://localhost:8080/solrwayback/services/web/{DATE}/{ORIGINAL_URL}
+    
+    Returns
+    -------
+    tuple
+        (date, url) where:
+        - date: str, the timestamp (e.g., "20001117071800")
+        - url: str, the original archived URL
+    """
+    prefix = PLAYBACK_PREFIX
+    
+    if not decoded_url.startswith(prefix):
+        raise ValueError("URL must start with the playback prefix: " + prefix)
+
+    # Remove the prefix
+    remainder = decoded_url[len(prefix):]
+    
+    # Split on the first '/' to separate date from URL
+    parts = remainder.split('/', 1)
+    
+    if len(parts) != 2:
+        raise ValueError("URL does not contain a valid date and original URL after the prefix. It was split into:" + str(parts))
+    
+    date = parts[0]
+    url = parts[1]
+    
+    return date, url
+
+
 def parse_solrwayback_params(url):
     """
     Parse SolrWayback search URL parameters using urlparse + parse_qs.
@@ -23,11 +65,13 @@ def parse_solrwayback_params(url):
 
     return query, facets, fqs
 
-def print_results(query, facets, filterquery, counter):
+def print_search_results(query, facets, filterquery):
     """
     Prints the extracted query, facets, and filter query in a formatted manner.
     """
-    print("Iteration: ", counter)
+    global COUNTER
+    print("Action Number: ", COUNTER)
+    print("SolrWayback Query changed.")
     print("Query: ", query)
     if facets:
         print("Facets: ", facets)
@@ -56,18 +100,49 @@ def main(history_path):
         lines = file.readlines()  
         lines.reverse()
 
-        counter = 0 # Counter to keep track of amount of iterations
-
         for line in lines:
+            global LAST_ACTION_EQUALS_CLICK
 
+            # Decode the line for easier parsing and better readability
             decoded_line = unquote_plus(line)
-            # Determine that history entry is a SolrWayback search URL
-            if "localhost:8080/solrwayback/search?query=" in decoded_line:
-                counter += 1
 
-                query, facets, filterquery = parse_solrwayback_params(decoded_line)
-            
-                print_results(query, facets, filterquery, counter)
+            # Determine that history entry is a SolrWayback Playback URL
+            if decoded_line.startswith(PLAYBACK_PREFIX):
+                handle_playback_entry(decoded_line)
+
+            # Determine that history entry is a SolrWayback search URL
+            elif decoded_line.startswith(QUERY_PREFIX):
+                handle_search_entry(decoded_line)
+
+def handle_search_entry(decoded_line):
+    global LAST_ACTION_EQUALS_CLICK, COUNTER
+    COUNTER += 1
+    query, facets, filterquery = parse_solrwayback_params(decoded_line)
+    print_search_results(query, facets, filterquery)
+    LAST_ACTION_EQUALS_CLICK = False
+
+def handle_playback_entry(decoded_line):
+    global LAST_ACTION_EQUALS_CLICK, COUNTER
+    COUNTER += 1
+    archive_date, original_url = parse_archived_url(decoded_line)
+    print_playback_info(decoded_line, archive_date, original_url)
+    LAST_ACTION_EQUALS_CLICK = True
+
+def print_playback_info(decoded_line, archive_date, original_url):
+    """
+        Print information about a clicked SolrWayback playback URL.
+    """
+    global COUNTER
+    print(f"Action Number: {COUNTER}")
+    if LAST_ACTION_EQUALS_CLICK:
+        print("Clicked on a link from a playback page.")
+    else:
+        print("Found interesting search result and clicked it from search results: ")
+    print("SolrWayback Playback URL clicked.")
+    print("URL clicked: ", decoded_line)
+    print("Archive Date: ", archive_date)
+    print("Original URL: ", original_url)
+    print("-----------------------")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
